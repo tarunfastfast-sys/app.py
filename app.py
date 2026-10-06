@@ -165,8 +165,44 @@ elif menu == "👥 Customer Lead & Query Punch":
                 st.success("Customer saved & follow-up task auto-created!")
                 st.rerun()
 
+import io
+
 # ----------------- 3. FULL CALENDAR / ALL WORK -----------------
 elif menu == "📅 Full Calendar / All Work":
-    st.header("📊 Master Activity Log")
-    df_tasks = pd.DataFrame(st.session_state.tasks)
-    st.dataframe(df_tasks, use_container_width=True)
+    st.header("📊 Master Activity Log & Export")
+    
+    tab1, tab2 = st.tabs(["📋 Tasks Master Data", "👥 Customer Master Data"])
+    
+    with tab1:
+        st.subheader("All Team Tasks")
+        df_tasks = pd.DataFrame(st.session_state.tasks)
+        st.dataframe(df_tasks, use_container_width=True)
+        
+        # Excel Download Button for Tasks
+        buffer_tasks = io.BytesIO()
+        with pd.ExcelWriter(buffer_tasks, engine='openpyxl') as writer:
+            df_tasks.to_excel(writer, index=False, sheet_name='Tasks')
+        
+        st.download_button(
+            label="📥 Download Tasks Excel (.xlsx)",
+            data=buffer_tasks.getvalue(),
+            file_name=f"team_tasks_{date.today()}.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+
+    with tab2:
+        st.subheader("All Customer Queries & Leads")
+        df_cust = pd.DataFrame(st.session_state.customers)
+        st.dataframe(df_cust, use_container_width=True)
+        
+        # Excel Download Button for Customers
+        buffer_cust = io.BytesIO()
+        with pd.ExcelWriter(buffer_cust, engine='openpyxl') as writer:
+            df_cust.to_excel(writer, index=False, sheet_name='Customers')
+        
+        st.download_button(
+            label="📥 Download Customers Excel (.xlsx)",
+            data=buffer_cust.getvalue(),
+            file_name=f"customers_leads_{date.today()}.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
