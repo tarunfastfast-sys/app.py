@@ -2,11 +2,12 @@ import streamlit as st
 import pandas as pd
 from datetime import date, datetime
 import urllib.parse
+import io
 
 # Page Setup
 st.set_page_config(page_title="Team Activity & CRM Planner", layout="wide")
 
-# Mock User Database (Real app me ise Supabase/Database se connect karenge)
+# Mock User Profiles
 USERS = {
     "admin": {"name": "Director / Admin", "role": "Admin", "pin": "1234"},
     "rahul": {"name": "Rahul (Counselor)", "role": "Counselor", "pin": "1111"},
@@ -70,7 +71,6 @@ if menu == "📋 Daily Tasks & Operations":
     
     with col1:
         st.subheader("Today's Pending Tasks")
-        # Filter based on role if not Admin
         user_tasks = [
             t for t in st.session_state.tasks 
             if (current_user["role"] == "Admin" or t["assigned_to"] == current_user["role"]) and t["status"] != "Completed"
@@ -79,11 +79,11 @@ if menu == "📋 Daily Tasks & Operations":
         if not user_tasks:
             st.success("✅ Aaj ke sabhi tasks complete hain!")
         else:
-            for i, t in enumerate(user_tasks):
+            for t in user_tasks:
                 with st.expander(f"📌 {t['task']} | Due: {t['due_date']} ({t['type']})"):
                     st.write(f"**Notes:** {t['notes']}")
                     st.write(f"**Assigned To:** {t['assigned_to']}")
-                    if st.button(f"Mark as Completed", key=f"comp_{t['id']}"):
+                    if st.button("Mark as Completed", key=f"comp_{t['id']}"):
                         t["status"] = "Completed"
                         st.success("Task complete ho gaya!")
                         st.rerun()
@@ -152,7 +152,6 @@ elif menu == "👥 Customer Lead & Query Punch":
                     "next_followup": str(c_followup),
                     "status": "Open"
                 })
-                # Auto add follow up task for counselor
                 st.session_state.tasks.append({
                     "id": len(st.session_state.tasks) + 1,
                     "task": f"Follow-up call with {c_name}",
@@ -164,8 +163,6 @@ elif menu == "👥 Customer Lead & Query Punch":
                 })
                 st.success("Customer saved & follow-up task auto-created!")
                 st.rerun()
-
-import io
 
 # ----------------- 3. FULL CALENDAR / ALL WORK -----------------
 elif menu == "📅 Full Calendar / All Work":
