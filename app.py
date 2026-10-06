@@ -10,8 +10,8 @@ st.set_page_config(page_title="Team Activity & CRM Planner", layout="wide")
 # Mock User Profiles
 USERS = {
     "admin": {"name": "Director / Admin", "role": "Admin", "pin": "1234"},
-    "rahul": {"name": "Rahul (Counselor)", "role": "Counselor", "pin": "1111"},
-    "priya": {"name": "Priya (Media/Operations)", "role": "Media/Ops", "pin": "2222"}
+    "varsha": {"name": "Dr. Varsha Varwandkar", "role": "Counselor", "pin": "1111"},
+    "tarun": {"name": "Tarun (Media/Operations)", "role": "Media/Ops", "pin": "2222"}
 }
 
 # Session State for demo data storage
